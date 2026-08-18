@@ -16,20 +16,25 @@
   <!-- Favicon Emoji -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💎</text></svg>">
 
-  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <!-- Resource Hints: preconnect to CDN origins before browser discovers them -->
+  <!-- These eliminate TCP+TLS handshake time for third-party assets          -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
-  <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Stylesheets -->
+  <!-- Stylesheets (render-critical, loaded synchronously) -->
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/style.css">
+
+  <!--
+    Lucide Icons & Chart.js are intentionally NOT in <head>.
+    They are loaded with `defer` at the bottom of <body> to eliminate
+    their render-blocking impact on LCP.
+  -->
 </head>
 <body>
 
@@ -1226,11 +1231,25 @@
   <!-- Toast Notification Stack Container -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- Application Scripts -->
-  <script src="js/storage.js"></script>
-  <script src="js/calculators.js"></script>
-  <script src="js/charts.js"></script>
-  <script src="js/tracker.js"></script>
-  <script src="js/app.js"></script>
+  <!-- =====================================================================
+       Application Scripts — all use `defer`
+       - Downloads happen in parallel during HTML parsing (non-blocking)
+       - Execution order is preserved (same as classic bottom-of-body)
+       - None of these block first paint / LCP
+
+       Lucide pinned to 1.32.0 → eliminates 118ms @latest redirect.
+       Chart.js deferred       → no longer blocks initial render.
+  ====================================================================== -->
+
+  <!-- Third-party CDN libraries -->
+  <script src="https://unpkg.com/lucide@1.32.0/dist/umd/lucide.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+
+  <!-- Local application modules (order matters — dependencies first) -->
+  <script src="js/storage.js" defer></script>
+  <script src="js/calculators.js" defer></script>
+  <script src="js/charts.js" defer></script>
+  <script src="js/tracker.js" defer></script>
+  <script src="js/app.js" defer></script>
 </body>
 </html>
