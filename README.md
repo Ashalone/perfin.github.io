@@ -1,6 +1,6 @@
 # 💎 PerFin - Personal Finance Tracker & Financial Calculator Suite
 
-> **Live Website**: [perfin.github.io](https://perfin.github.io)  
+> **Live Website**: [ashalone.github.io/perfin.github.io](https://ashalone.github.io/perfin.github.io/)  
 > A modern, private, client-side personal finance tracker, cashflow dashboard, and financial planning suite built for the web.
 
 ![PerFin Banner](https://img.shields.io/badge/Privacy-100%25%20Client--Side-10b981?style=for-the-badge)
@@ -57,7 +57,7 @@ Since PerFin is built purely with standard HTML5, CSS3, and modern JavaScript:
 ### Running Locally
 1. Clone the repository:
    ```bash
-   git clone https://github.com/perfin/perfin.github.io.git
+   git clone https://github.com/Ashalone/perfin.github.io.git
    cd perfin.github.io
    ```
 2. Open `index.html` directly in any modern browser (Chrome, Edge, Firefox, Safari) or use a local static server:
