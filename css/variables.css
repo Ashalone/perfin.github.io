@@ -1,0 +1,146 @@
+/* ==========================================================================
+   PerFin Design System & Theme Variables
+   Dual Theme: Dark Fintech (Default) & Crisp Modern Light
+   ========================================================================== */
+
+:root {
+  /* Color Palette - Base Hues */
+  --primary-50: #eef2ff;
+  --primary-100: #e0e7ff;
+  --primary-200: #c7d2fe;
+  --primary-300: #a5b4fc;
+  --primary-400: #818cf8;
+  --primary-500: #6366f1; /* Main Brand Indigo */
+  --primary-600: #4f46e5;
+  --primary-700: #4338ca;
+  --primary-800: #3730a3;
+  --primary-900: #312e81;
+
+  /* Accent - Success Emerald */
+  --emerald-400: #34d399;
+  --emerald-500: #10b981;
+  --emerald-600: #059669;
+  --emerald-500-alpha: rgba(16, 185, 129, 0.15);
+
+  /* Accent - Danger / Expense Rose */
+  --rose-400: #fb7185;
+  --rose-500: #f43f5e;
+  --rose-600: #e11d48;
+  --rose-500-alpha: rgba(244, 63, 94, 0.15);
+
+  /* Accent - Warning / Budget Amber */
+  --amber-400: #fbbf24;
+  --amber-500: #f59e0b;
+  --amber-600: #d97706;
+  --amber-500-alpha: rgba(245, 158, 11, 0.15);
+
+  /* Accent - Sky / Info */
+  --sky-400: #38bdf8;
+  --sky-500: #0ea5e9;
+  --sky-600: #0284c7;
+  --sky-500-alpha: rgba(14, 165, 233, 0.15);
+
+  /* Accent - Purple / Investment */
+  --purple-400: #c084fc;
+  --purple-500: #a855f7;
+  --purple-600: #9333ea;
+  --purple-500-alpha: rgba(168, 85, 247, 0.15);
+
+  /* Typography */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Sizing & Radius */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  /* Layout Sizing */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 76px;
+  --header-height: 72px;
+}
+
+/* ==========================================================================
+   Dark Theme (Default)
+   ========================================================================== */
+[data-theme="dark"],
+:root:not([data-theme="light"]) {
+  --bg-app: #080c14;
+  --bg-surface: #0f172a;
+  --bg-surface-elevated: #162036;
+  --bg-surface-glass: rgba(15, 23, 42, 0.75);
+  --bg-card: rgba(22, 32, 54, 0.7);
+  --bg-card-hover: rgba(30, 41, 69, 0.85);
+  --bg-input: #0b1120;
+  --bg-input-focus: #0f172a;
+  --bg-badge: rgba(255, 255, 255, 0.06);
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.14);
+  --border-focus: var(--primary-500);
+
+  /* Text colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #0f172a;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow-primary: 0 0 20px rgba(99, 102, 241, 0.35);
+  --shadow-glow-emerald: 0 0 20px rgba(16, 185, 129, 0.35);
+
+  /* Chart & Canvas */
+  --chart-grid: rgba(255, 255, 255, 0.06);
+  --chart-text: #94a3b8;
+}
+
+/* ==========================================================================
+   Light Theme
+   ========================================================================== */
+[data-theme="light"] {
+  --bg-app: #f4f6fb;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f8fafc;
+  --bg-surface-glass: rgba(255, 255, 255, 0.85);
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-input: #f1f5f9;
+  --bg-input-focus: #ffffff;
+  --bg-badge: rgba(0, 0, 0, 0.05);
+
+  /* Borders */
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-medium: rgba(0, 0, 0, 0.12);
+  --border-focus: var(--primary-600);
+
+  /* Text colors */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-inverse: #f8fafc;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.04);
+  --shadow-glow-primary: 0 0 20px rgba(99, 102, 241, 0.15);
+  --shadow-glow-emerald: 0 0 20px rgba(16, 185, 129, 0.15);
+
+  /* Chart & Canvas */
+  --chart-grid: rgba(0, 0, 0, 0.06);
+  --chart-text: #64748b;
+}

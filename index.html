@@ -1,33 +1,1235 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My GitHub Website</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #0f172a;
-      color: #f8fafc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .card {
-      text-align: center;
-      padding: 2rem;
-      background: #1e293b;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    }
-  </style>
+  <title>PerFin - Personal Finance Tracker & Financial Calculator Suite</title>
+  <meta name="description" content="All-in-one personal finance tracker, compound interest calculator, loan mortgage amortization, FIRE retirement planner, and net worth balance sheet. 100% private, client-side.">
+  <meta name="keywords" content="personal finance, expense tracker, budget calculator, compound interest calculator, loan amortization, mortgage calculator, FIRE planner, net worth tracker">
+  <meta name="theme-color" content="#080c14">
+
+  <!-- OpenGraph / Social Sharing -->
+  <meta property="og:title" content="PerFin - Personal Finance Tracker & Calculator Suite">
+  <meta property="og:description" content="Free, 100% private, client-side personal finance tracker and financial calculator suite.">
+  <meta property="og:type" content="website">
+
+  <!-- Favicon Emoji -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💎</text></svg>">
+
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="card">
-    <h1>🚀 Hello World!</h1>
-    <p>My new website is live on GitHub Pages.</p>
+
+  <!-- Ambient Glow Background Canvas Effect -->
+  <div class="ambient-glow"></div>
+
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="#" class="brand-logo">
+          <div class="brand-icon">
+            <i data-lucide="wallet-cards"></i>
+          </div>
+          <span>PerFin</span>
+          <span class="brand-badge">SUITE</span>
+        </a>
+      </div>
+
+      <nav class="nav-menu">
+        <div class="nav-section-title">Overview</div>
+        <a href="#dashboard" class="nav-item active" data-tab="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#tracker" class="nav-item" data-tab="tracker">
+          <i data-lucide="receipt"></i>
+          <span>Tracker & Budgets</span>
+        </a>
+
+        <div class="nav-section-title">Calculators & Planners</div>
+        <a href="#compound" class="nav-item" data-tab="compound">
+          <i data-lucide="trending-up"></i>
+          <span>Compound Growth</span>
+        </a>
+        <a href="#loan" class="nav-item" data-tab="loan">
+          <i data-lucide="landmark"></i>
+          <span>Loan & Mortgage</span>
+        </a>
+        <a href="#fire" class="nav-item" data-tab="fire">
+          <i data-lucide="target"></i>
+          <span>Retirement & FIRE</span>
+        </a>
+
+        <div class="nav-section-title">Wealth Management</div>
+        <a href="#networth" class="nav-item" data-tab="networth">
+          <i data-lucide="shield-check"></i>
+          <span>Net Worth Tracker</span>
+        </a>
+        <a href="#settings" class="nav-item" data-tab="settings">
+          <i data-lucide="settings"></i>
+          <span>Settings & Backup</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-privacy-pill">
+          <span class="privacy-dot"></span>
+          <span>100% Client-Side & Private</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      
+      <!-- Top Application Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Navigation">
+            <i data-lucide="menu"></i>
+          </button>
+          <div class="header-title-group">
+            <h1 id="pageHeaderTitle">Financial Dashboard</h1>
+            <p id="pageHeaderDesc">At-a-glance net worth, cashflow, and spending analytics</p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <!-- Currency Selector -->
+          <div class="currency-selector-wrapper">
+            <select class="currency-select" id="globalCurrencySelect" aria-label="Global Currency">
+              <!-- Populated via JS -->
+            </select>
+            <i data-lucide="chevron-down" class="currency-chevron"></i>
+          </div>
+
+          <!-- Theme Toggle -->
+          <button class="btn-icon" id="btnThemeToggle" title="Toggle Theme" aria-label="Toggle Dark/Light Mode">
+            <i data-lucide="sun"></i>
+          </button>
+
+          <!-- Quick Action: Add Transaction -->
+          <button class="btn btn-primary" onclick="App.openTransactionModal()">
+            <i data-lucide="plus"></i>
+            <span style="display:inline-block;">Add Record</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Content Container -->
+      <main class="content-body">
+
+        <!-- =============================================================== -->
+        <!-- TAB 1: DASHBOARD                                               -->
+        <!-- =============================================================== -->
+        <section class="tab-pane active" id="tab-dashboard">
+          
+          <!-- Key Metrics Grid -->
+          <div class="grid-4" style="margin-bottom: 1.5rem;">
+            <!-- Net Worth -->
+            <div class="card stat-card emerald">
+              <div class="stat-card-header">
+                <span class="stat-label">Total Net Worth</span>
+                <div class="stat-icon" style="color: var(--emerald-400);">
+                  <i data-lucide="wallet"></i>
+                </div>
+              </div>
+              <div class="stat-value" id="dashNetWorthVal">$0.00</div>
+              <div class="stat-footer">
+                <span class="trend-badge trend-up">
+                  <i data-lucide="trending-up"></i> Assets > Debts
+                </span>
+                <span>Real-time balance</span>
+              </div>
+            </div>
+
+            <!-- Monthly Income -->
+            <div class="card stat-card sky">
+              <div class="stat-card-header">
+                <span class="stat-label">Monthly Inflow</span>
+                <div class="stat-icon" style="color: var(--sky-400);">
+                  <i data-lucide="arrow-down-left"></i>
+                </div>
+              </div>
+              <div class="stat-value" id="dashIncomeVal">$0.00</div>
+              <div class="stat-footer">
+                <span class="trend-badge trend-neutral">This Month</span>
+                <span>Total earned</span>
+              </div>
+            </div>
+
+            <!-- Monthly Expenses -->
+            <div class="card stat-card rose">
+              <div class="stat-card-header">
+                <span class="stat-label">Monthly Outflow</span>
+                <div class="stat-icon" style="color: var(--rose-400);">
+                  <i data-lucide="arrow-up-right"></i>
+                </div>
+              </div>
+              <div class="stat-value" id="dashExpenseVal">$0.00</div>
+              <div class="stat-footer">
+                <span class="trend-badge trend-down">This Month</span>
+                <span>Total spent</span>
+              </div>
+            </div>
+
+            <!-- Savings Rate -->
+            <div class="card stat-card purple">
+              <div class="stat-card-header">
+                <span class="stat-label">Savings Rate</span>
+                <div class="stat-icon" style="color: var(--purple-400);">
+                  <i data-lucide="piggy-bank"></i>
+                </div>
+              </div>
+              <div class="stat-value" id="dashSavingsRateVal">0.0%</div>
+              <div class="stat-footer">
+                <span class="trend-badge trend-up">Target: 20%+</span>
+                <span>Inflow saved</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="grid-2" style="margin-bottom: 1.5rem;">
+            <!-- Cashflow Trendline -->
+            <div class="card chart-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i data-lucide="bar-chart-3"></i>
+                  <div>
+                    <div class="card-title">Cashflow History (Last 6 Months)</div>
+                    <div class="card-subtitle">Monthly Income vs. Expense trends</div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-wrapper">
+                <canvas id="dashCashflowChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Expense Category Donut -->
+            <div class="card chart-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i data-lucide="pie-chart"></i>
+                  <div>
+                    <div class="card-title">Current Month Expenses by Category</div>
+                    <div class="card-subtitle">Where your money went this month</div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-wrapper">
+                <canvas id="dashCategoryDonut"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Row: Recent Transactions & Budget Progress -->
+          <div class="grid-2">
+            <!-- Recent Transactions Table -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i data-lucide="clock"></i>
+                  <div class="card-title">Recent Transactions</div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="App.switchTab('tracker')">
+                  View All
+                </button>
+              </div>
+              <div class="table-container" style="border: none;">
+                <table class="data-table">
+                  <tbody id="dashRecentTransactionsList">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Category Budget Progress -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i data-lucide="sliders"></i>
+                  <div>
+                    <div class="card-title">Budget Utilization</div>
+                    <div class="card-subtitle">Monthly limit progress</div>
+                  </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="App.openBudgetModal()">
+                  <i data-lucide="edit"></i> Edit Budgets
+                </button>
+              </div>
+              <div id="dashBudgetOverviewList">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- TAB 2: TRACKER & BUDGETS                                       -->
+        <!-- =============================================================== -->
+        <section class="tab-pane" id="tab-tracker">
+          
+          <!-- Filters & Action Bar -->
+          <div class="card" style="margin-bottom: 1.5rem; padding: 1.15rem 1.5rem;">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem;">
+              
+              <!-- Time Range Filter Pills -->
+              <div class="segmented-control">
+                <button class="seg-btn active" data-filter-period="this_month">This Month</button>
+                <button class="seg-btn" data-filter-period="last_month">Last Month</button>
+                <button class="seg-btn" data-filter-period="last_30_days">Last 30 Days</button>
+                <button class="seg-btn" data-filter-period="this_year">This Year</button>
+                <button class="seg-btn" data-filter-period="all">All Time</button>
+              </div>
+
+              <!-- Type Filter Pills -->
+              <div class="segmented-control">
+                <button class="seg-btn active" data-filter-type="all">All Types</button>
+                <button class="seg-btn" data-filter-type="expense">Expenses</button>
+                <button class="seg-btn" data-filter-type="income">Incomes</button>
+              </div>
+
+              <!-- Category Dropdown & Search Bar -->
+              <div style="display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 260px; justify-content: flex-end;">
+                <select class="form-control" id="trackerCategoryFilter" style="width: auto; padding: 0.45rem 0.75rem; font-size: 0.85rem;">
+                  <option value="all">All Categories</option>
+                </select>
+
+                <div class="input-group" style="max-width: 220px;">
+                  <input type="text" class="form-control" id="trackerSearchInput" placeholder="Search records..." style="padding-left: 2rem; font-size: 0.85rem;">
+                  <i data-lucide="search" class="input-prefix" style="font-size: 0.9rem;"></i>
+                </div>
+
+                <button class="btn btn-secondary btn-sm" onclick="App.exportCSV()" title="Export Filtered Transactions to CSV">
+                  <i data-lucide="download"></i> CSV
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="App.openTransactionModal()">
+                  <i data-lucide="plus"></i> Add
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Transactions Table Card -->
+          <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+              <div class="card-title-group">
+                <i data-lucide="list"></i>
+                <div class="card-title">Transaction Records</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span id="trackerPageIndicator" style="font-size: 0.8rem; color: var(--text-muted);">Page 1 of 1</span>
+                <button class="btn-icon btn-sm" id="trackerBtnPrevPage" title="Previous Page">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <button class="btn-icon btn-sm" id="trackerBtnNextPage" title="Next Page">
+                  <i data-lucide="chevron-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="trackerTransactionsTableBody">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Budget vs Actual Visual & Category Limits -->
+          <div class="grid-2">
+            <!-- Budget vs Actual Chart -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i data-lucide="bar-chart-2"></i>
+                  <div>
+                    <div class="card-title">Budget vs. Actual Spending</div>
+                    <div class="card-subtitle">Current month comparison</div>
+                  </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="App.openBudgetModal()">
+                  <i data-lucide="sliders"></i> Set Targets
+                </button>
+              </div>
+              <div class="chart-wrapper">
+                <canvas id="trackerBudgetChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Category Budget Cards Grid -->
+            <div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
+                <h3 style="font-size: 1.1rem;">Category Budget Status</h3>
+              </div>
+              <div class="grid-2" id="trackerBudgetGrid">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- TAB 3: COMPOUND INTEREST CALCULATOR                            -->
+        <!-- =============================================================== -->
+        <section class="tab-pane" id="tab-compound">
+          <div class="grid-calc">
+            
+            <!-- Controls Form Column -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i data-lucide="calculator"></i>
+                  <div class="card-title">Growth Parameters</div>
+                </div>
+              </div>
+
+              <!-- Initial Deposit -->
+              <div class="form-group">
+                <label class="form-label">
+                  <span>Initial Principal</span>
+                  <span class="form-label-desc">Starting investment</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-control" id="ciInitialDeposit" value="10000" min="0" step="500">
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" class="range-slider" id="ciInitialDepositSlider" min="0" max="250000" step="1000" value="10000">
+                </div>
+              </div>
+
+              <!-- Monthly Contribution -->
+              <div class="form-group">
+                <label class="form-label">
+                  <span>Monthly Contribution</span>
+                  <span class="form-label-desc">Regular addition</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-control" id="ciMonthlyContribution" value="500" min="0" step="50">
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" class="range-slider" id="ciMonthlyContributionSlider" min="0" max="10000" step="50" value="500">
+                </div>
+              </div>
+
+              <!-- Annual Interest Rate -->
+              <div class="form-group">
+                <label class="form-label">
+                  <span>Estimated Annual Return</span>
+                  <span class="form-label-desc">% per year</span>
+                </label>
+                <div class="input-group has-suffix">
+                  <input type="number" class="form-control" id="ciAnnualRate" value="8" min="0" max="30" step="0.1">
+                  <span class="input-suffix">%</span>
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" class="range-slider" id="ciAnnualRateSlider" min="1" max="20" step="0.5" value="8">
+                </div>
+              </div>
+
+              <!-- Investment Period (Years) -->
+              <div class="form-group">
+                <label class="form-label">
+                  <span>Investment Timeframe</span>
+                  <span class="form-label-desc">Years to grow</span>
+                </label>
+                <div class="input-group has-suffix">
+                  <input type="number" class="form-control" id="ciYears" value="15" min="1" max="50" step="1">
+                  <span class="input-suffix">Years</span>
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" class="range-slider" id="ciYearsSlider" min="1" max="40" step="1" value="15">
+                </div>
+              </div>
+
+              <!-- Compounding Frequency & Inflation -->
+              <div class="grid-2">
+                <div class="form-group">
+                  <label class="form-label">Compounding</label>
+                  <select class="form-control" id="ciFrequency">
+                    <option value="12" selected>Monthly (12/yr)</option>
+                    <option value="4">Quarterly (4/yr)</option>
+                    <option value="1">Annually (1/yr)</option>
+                    <option value="365">Daily (365/yr)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Est. Inflation</label>
+                  <div class="input-group has-suffix">
+                    <input type="number" class="form-control" id="ciInflationRate" value="2.5" min="0" max="15" step="0.1">
+                    <span class="input-suffix">%</span>
+                  </div>
+                  <input type="range" class="range-slider" id="ciInflationRateSlider" min="0" max="10" step="0.5" value="2.5" style="margin-top: 0.35rem;">
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Results & Growth Chart Column -->
+            <div>
+              <!-- Hero Result Card -->
+              <div class="calc-result-box">
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                  Estimated Future Balance
+                </div>
+                <div class="calc-hero-number" id="ciFutureBalance">$0.00</div>
+
+                <div class="calc-breakdown-grid">
+                  <div class="calc-mini-stat">
+                    <div class="mini-label">Total Principal</div>
+                    <div class="mini-val" id="ciTotalPrincipal" style="color: var(--primary-400);">$0.00</div>
+                  </div>
+                  <div class="calc-mini-stat">
+                    <div class="mini-label">Total Interest Earned</div>
+                    <div class="mini-val" id="ciTotalInterest" style="color: var(--emerald-400);">$0.00</div>
+                  </div>
+                  <div class="calc-mini-stat">
+                    <div class="mini-label">Inflation Adjusted</div>
+                    <div class="mini-val" id="ciInflationAdjusted" style="color: var(--sky-400);">$0.00</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Growth Curve Chart -->
+              <div class="card chart-card" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <i data-lucide="line-chart"></i>
+                    <div class="card-title">Portfolio Accumulation Trajectory</div>
+                  </div>
+                </div>
+                <div class="chart-wrapper">
+                  <canvas id="ciGrowthChart"></canvas>
+                </div>
+              </div>
+
+              <!-- Growth Breakdown Table -->
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <i data-lucide="table"></i>
+                    <div class="card-title">Year-by-Year Growth Schedule</div>
+                  </div>
+                </div>
+                <div class="table-container" style="max-height: 280px; overflow-y: auto;">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Year</th>
+                        <th>Start Balance</th>
+                        <th>Deposits</th>
+                        <th>Interest</th>
+                        <th>End Balance</th>
+                        <th>Real Power</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ciScheduleTableBody">
+                      <!-- Populated via JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- TAB 4: LOAN & MORTGAGE AMORTIZATION                            -->
+        <!-- =============================================================== -->
+        <section class="tab-pane" id="tab-loan">
+          <div class="grid-calc">
+            
+            <!-- Controls Form Column -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i data-lucide="file-text"></i>
+                  <div class="card-title">Loan Parameters</div>
+                </div>
+              </div>
+
+              <!-- Loan Principal Amount -->
+              <div class="form-group">
+                <label class="form-label">
+                  <span>Loan Principal Amount</span>
+                  <span class="form-label-desc">Total borrowed</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-control" id="loanAmount" value="300000" min="1000" step="5000">
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" class="range-slider" id="loanAmountSlider" min="10000" max="1000000" step="5000" value="300000">
+                </div>
+              </div>
+
+              <!-- Annual Interest Rate -->
+              <div class="form-group">
+                <label class="form-label">
+                  <span>Annual Interest Rate</span>
+                  <span class="form-label-desc">% APR</span>
+                </label>
+                <div class="input-group has-suffix">
+                  <input type="number" class="form-control" id="loanInterestRate" value="6.5" min="0.1" max="25" step="0.1">
+                  <span class="input-suffix">%</span>
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" class="range-slider" id="loanInterestRateSlider" min="1" max="15" step="0.1" value="6.5">
+                </div>
+              </div>
+
+              <!-- Loan Term (Years) -->
+              <div class="form-group">
+                <label class="form-label">
+                  <span>Loan Term Duration</span>
+                  <span class="form-label-desc">Years</span>
+                </label>
+                <div class="input-group has-suffix">
+                  <input type="number" class="form-control" id="loanTermYears" value="30" min="1" max="40" step="1">
+                  <span class="input-suffix">Years</span>
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" class="range-slider" id="loanTermYearsSlider" min="5" max="30" step="5" value="30">
+                </div>
+              </div>
+
+              <!-- Extra Monthly Prepayment -->
+              <div class="form-group">
+                <label class="form-label">
+                  <span>Extra Monthly Prepayment</span>
+                  <span class="form-label-desc">Speed up payoff</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-control" id="loanExtraMonthly" value="200" min="0" step="50">
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" class="range-slider" id="loanExtraMonthlySlider" min="0" max="2000" step="50" value="200">
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Results & Amortization Column -->
+            <div>
+              <!-- Hero EMI Result Box -->
+              <div class="calc-result-box">
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                  Monthly Principal & Interest (EMI)
+                </div>
+                <div class="calc-hero-number" id="loanMonthlyEMI" style="color: var(--primary-400);">$0.00</div>
+
+                <div class="calc-breakdown-grid">
+                  <div class="calc-mini-stat">
+                    <div class="mini-label">Total Interest Paid</div>
+                    <div class="mini-val" id="loanTotalInterest" style="color: var(--rose-400);">$0.00</div>
+                  </div>
+                  <div class="calc-mini-stat">
+                    <div class="mini-label">Interest Saved</div>
+                    <div class="mini-val" id="loanInterestSavings" style="color: var(--emerald-400);">$0.00</div>
+                  </div>
+                  <div class="calc-mini-stat">
+                    <div class="mini-label">Time Shaved Off</div>
+                    <div class="mini-val" id="loanMonthsSaved" style="color: var(--amber-400);">0 mos</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Loan Payoff Trajectory Chart -->
+              <div class="card chart-card" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <i data-lucide="trending-down"></i>
+                    <div class="card-title">Loan Balance & Interest Trajectory</div>
+                  </div>
+                </div>
+                <div class="chart-wrapper">
+                  <canvas id="loanPayoffChart"></canvas>
+                </div>
+              </div>
+
+              <!-- Annual Amortization Schedule Table -->
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <i data-lucide="calendar"></i>
+                    <div class="card-title">Yearly Amortization Schedule</div>
+                  </div>
+                </div>
+                <div class="table-container" style="max-height: 280px; overflow-y: auto;">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Year</th>
+                        <th>Total Paid</th>
+                        <th>Principal Paid</th>
+                        <th>Interest Paid</th>
+                        <th>Ending Balance</th>
+                      </tr>
+                    </thead>
+                    <tbody id="loanScheduleTableBody">
+                      <!-- Populated via JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- TAB 5: RETIREMENT & FIRE PLANNER                               -->
+        <!-- =============================================================== -->
+        <section class="tab-pane" id="tab-fire">
+          <div class="grid-calc">
+            
+            <!-- Controls Form Column -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i data-lucide="target"></i>
+                  <div class="card-title">FIRE Milestones</div>
+                </div>
+              </div>
+
+              <!-- Current & Target Retirement Age -->
+              <div class="grid-2">
+                <div class="form-group">
+                  <label class="form-label">Current Age</label>
+                  <input type="number" class="form-control" id="fireCurrentAge" value="30" min="18" max="75">
+                  <input type="range" class="range-slider" id="fireCurrentAgeSlider" min="18" max="65" value="30" style="margin-top: 0.35rem;">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Target Retire Age</label>
+                  <input type="number" class="form-control" id="fireTargetAge" value="50" min="25" max="85">
+                  <input type="range" class="range-slider" id="fireTargetAgeSlider" min="30" max="70" value="50" style="margin-top: 0.35rem;">
+                </div>
+              </div>
+
+              <!-- Current Savings Portfolio -->
+              <div class="form-group">
+                <label class="form-label">
+                  <span>Current Invested Portfolio</span>
+                  <span class="form-label-desc">Starting nest egg</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-control" id="fireCurrentSavings" value="50000" min="0" step="5000">
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" class="range-slider" id="fireCurrentSavingsSlider" min="0" max="500000" step="5000" value="50000">
+                </div>
+              </div>
+
+              <!-- Monthly Investment Contribution -->
+              <div class="form-group">
+                <label class="form-label">
+                  <span>Monthly Contribution</span>
+                  <span class="form-label-desc">Savings per month</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-control" id="fireMonthlyContribution" value="1500" min="0" step="100">
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" class="range-slider" id="fireMonthlyContributionSlider" min="0" max="10000" step="100" value="1500">
+                </div>
+              </div>
+
+              <!-- Expected Return & Inflation -->
+              <div class="grid-2">
+                <div class="form-group">
+                  <label class="form-label">Expected Return</label>
+                  <div class="input-group has-suffix">
+                    <input type="number" class="form-control" id="fireAnnualReturn" value="8" step="0.5">
+                    <span class="input-suffix">%</span>
+                  </div>
+                  <input type="range" class="range-slider" id="fireAnnualReturnSlider" min="3" max="15" step="0.5" value="8" style="margin-top: 0.35rem;">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Est. Inflation</label>
+                  <div class="input-group has-suffix">
+                    <input type="number" class="form-control" id="fireInflation" value="2.5" step="0.1">
+                    <span class="input-suffix">%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Expected Monthly Retirement Expenses & SWR -->
+              <div class="grid-2">
+                <div class="form-group">
+                  <label class="form-label">
+                    <span>Retirement Spend</span>
+                    <span class="form-label-desc">Monthly</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-prefix">$</span>
+                    <input type="number" class="form-control" id="fireMonthlySpend" value="4000" min="500" step="250">
+                  </div>
+                  <input type="range" class="range-slider" id="fireMonthlySpendSlider" min="1000" max="15000" step="250" value="4000" style="margin-top: 0.35rem;">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">
+                    <span>Safe Withdrawal</span>
+                    <span class="form-label-desc">(4% Rule)</span>
+                  </label>
+                  <div class="input-group has-suffix">
+                    <input type="number" class="form-control" id="fireSWR" value="4.0" step="0.1" min="2.5" max="6.0">
+                    <span class="input-suffix">%</span>
+                  </div>
+                  <input type="range" class="range-slider" id="fireSWRSlider" min="2.5" max="5.5" step="0.1" value="4.0" style="margin-top: 0.35rem;">
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Results & FIRE Trajectory Column -->
+            <div>
+              <!-- Hero FIRE Result Box -->
+              <div class="calc-result-box">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                    Target FIRE Nest Egg
+                  </span>
+                  <span id="fireFeasibilityStatus" class="badge badge-income">
+                    <i data-lucide="check-circle"></i> On Track
+                  </span>
+                </div>
+                <div class="calc-hero-number" id="fireTargetNumber">$0.00</div>
+
+                <div class="calc-breakdown-grid">
+                  <div class="calc-mini-stat">
+                    <div class="mini-label">Balance at Retirement</div>
+                    <div class="mini-val" id="fireProjectedAtRetire" style="color: var(--emerald-400);">$0.00</div>
+                  </div>
+                  <div class="calc-mini-stat">
+                    <div class="mini-label">Estimated FIRE Age</div>
+                    <div class="mini-val" id="fireAchievedAge" style="color: var(--purple-400);">Age 48</div>
+                  </div>
+                  <div class="calc-mini-stat">
+                    <div class="mini-label">Safe Monthly Drawdown</div>
+                    <div class="mini-val" id="fireMonthlyPassive" style="color: var(--sky-400);">$0.00</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Trajectory Chart -->
+              <div class="card chart-card">
+                <div class="card-header">
+                  <div class="card-title-group">
+                    <i data-lucide="sparkles"></i>
+                    <div>
+                      <div class="card-title">Accumulation & Decumulation Horizon</div>
+                      <div class="card-subtitle">Portfolio balance vs. required FIRE threshold over your lifetime</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="chart-wrapper chart-wrapper-tall">
+                  <canvas id="fireGrowthChart"></canvas>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- TAB 6: NET WORTH & BALANCE SHEET                               -->
+        <!-- =============================================================== -->
+        <section class="tab-pane" id="tab-networth">
+          
+          <!-- Key Net Worth Metrics -->
+          <div class="grid-4" style="margin-bottom: 1.5rem;">
+            <div class="card stat-card emerald">
+              <div class="stat-card-header">
+                <span class="stat-label">Total Net Worth</span>
+                <div class="stat-icon" style="color: var(--emerald-400);"><i data-lucide="shield-check"></i></div>
+              </div>
+              <div class="stat-value" id="nwNetWorthVal">$0.00</div>
+              <div class="stat-footer"><span>Assets minus liabilities</span></div>
+            </div>
+
+            <div class="card stat-card sky">
+              <div class="stat-card-header">
+                <span class="stat-label">Total Assets</span>
+                <div class="stat-icon" style="color: var(--sky-400);"><i data-lucide="layers"></i></div>
+              </div>
+              <div class="stat-value" id="nwTotalAssetsVal" style="color: var(--sky-400);">$0.00</div>
+              <div class="stat-footer"><span>Cash, stocks, property</span></div>
+            </div>
+
+            <div class="card stat-card rose">
+              <div class="stat-card-header">
+                <span class="stat-label">Total Liabilities</span>
+                <div class="stat-icon" style="color: var(--rose-400);"><i data-lucide="credit-card"></i></div>
+              </div>
+              <div class="stat-value" id="nwTotalLiabilitiesVal" style="color: var(--rose-400);">$0.00</div>
+              <div class="stat-footer"><span>Debts, loans, credit</span></div>
+            </div>
+
+            <div class="card stat-card amber">
+              <div class="stat-card-header">
+                <span class="stat-label">Debt-to-Asset Ratio</span>
+                <div class="stat-icon" style="color: var(--amber-400);"><i data-lucide="percent"></i></div>
+              </div>
+              <div class="stat-value" id="nwDebtRatioVal">0.0%</div>
+              <div class="stat-footer"><span>Healthy benchmark &lt; 35%</span></div>
+            </div>
+          </div>
+
+          <!-- Asset Allocation Chart & Lists -->
+          <div class="grid-2" style="margin-bottom: 1.5rem;">
+            <!-- Asset Allocation Donut Chart -->
+            <div class="card chart-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i data-lucide="pie-chart"></i>
+                  <div>
+                    <div class="card-title">Asset Allocation Distribution</div>
+                    <div class="card-subtitle">Diversification across asset classes</div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-wrapper">
+                <canvas id="nwAllocationDonut"></canvas>
+              </div>
+            </div>
+
+            <!-- Assets List Table -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i data-lucide="plus-circle" style="color: var(--emerald-400);"></i>
+                  <div class="card-title">Assets (What You Own)</div>
+                </div>
+                <button class="btn btn-emerald btn-sm" onclick="App.openAddNetWorthItemModal('asset')">
+                  <i data-lucide="plus"></i> Add Asset
+                </button>
+              </div>
+              <div class="table-container" style="border: none;">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Asset Name</th>
+                      <th>Category</th>
+                      <th>Value</th>
+                      <th style="text-align: right;">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="nwAssetsTableBody">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Liabilities List Table Row -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <i data-lucide="minus-circle" style="color: var(--rose-400);"></i>
+                <div class="card-title">Liabilities & Debts (What You Owe)</div>
+              </div>
+              <button class="btn btn-danger btn-sm" onclick="App.openAddNetWorthItemModal('liability')">
+                <i data-lucide="plus"></i> Add Debt
+              </button>
+            </div>
+            <div class="table-container" style="border: none;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Liability Name</th>
+                    <th>Category</th>
+                    <th>Balance</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="nwLiabilitiesTableBody">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- TAB 7: SETTINGS & DATA BACKUP                                  -->
+        <!-- =============================================================== -->
+        <section class="tab-pane" id="tab-settings">
+          <div class="grid-2">
+            
+            <!-- Preferences Card -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i data-lucide="sliders-horizontal"></i>
+                  <div class="card-title">Platform Preferences</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Global Base Currency</label>
+                <select class="form-control" onchange="App.setCurrency(this.value)">
+                  <option value="USD">USD - US Dollar ($)</option>
+                  <option value="EUR">EUR - Euro (€)</option>
+                  <option value="GBP">GBP - British Pound (£)</option>
+                  <option value="INR">INR - Indian Rupee (₹)</option>
+                  <option value="CAD">CAD - Canadian Dollar (CA$)</option>
+                  <option value="AUD">AUD - Australian Dollar (A$)</option>
+                  <option value="JPY">JPY - Japanese Yen (¥)</option>
+                  <option value="CHF">CHF - Swiss Franc (CHF)</option>
+                  <option value="SGD">SGD - Singapore Dollar (S$)</option>
+                  <option value="CNY">CNY - Chinese Yuan (¥)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Appearance & Visual Theme</label>
+                <div style="display: flex; gap: 0.75rem;">
+                  <button class="btn btn-secondary" onclick="App.applyTheme('dark')" style="flex: 1;">
+                    <i data-lucide="moon"></i> Dark Fintech
+                  </button>
+                  <button class="btn btn-secondary" onclick="App.applyTheme('light')" style="flex: 1;">
+                    <i data-lucide="sun"></i> Crisp Light
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-top: 1.5rem;">
+                <label class="form-label">Sample Data & Testing</label>
+                <p style="font-size: 0.8rem; margin-bottom: 0.75rem;">Load rich sample transactions, budget goals, and assets to demo the full dashboard.</p>
+                <button class="btn btn-secondary" onclick="App.loadDemoData()">
+                  <i data-lucide="refresh-cw"></i> Load Realistic Demo Dataset
+                </button>
+              </div>
+            </div>
+
+            <!-- Data Backup, Export & Privacy Card -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i data-lucide="database"></i>
+                  <div class="card-title">Data Backup & Privacy</div>
+                </div>
+              </div>
+
+              <div style="background: var(--bg-surface-elevated); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--emerald-400); margin-bottom: 0.25rem;">
+                  <i data-lucide="shield-check"></i> Zero-Knowledge Privacy
+                </div>
+                <p style="font-size: 0.8rem;">All records are saved strictly on your local browser. No data ever leaves your device or is transmitted to any cloud servers.</p>
+                <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+                  Stored Transactions: <strong id="settingsTxCount">0 recorded</strong>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <button class="btn btn-primary" onclick="App.exportJSON()">
+                  <i data-lucide="download"></i> Download Full Backup (.json)
+                </button>
+                <button class="btn btn-secondary" onclick="App.exportCSV()">
+                  <i data-lucide="file-spreadsheet"></i> Export Transactions (.csv)
+                </button>
+
+                <div style="position: relative; margin-top: 0.5rem;">
+                  <input type="file" id="importJsonFileInput" accept=".json" style="display:none;" onchange="App.importJSONFile(event)">
+                  <button class="btn btn-secondary" style="width: 100%;" onclick="document.getElementById('importJsonFileInput').click()">
+                    <i data-lucide="upload"></i> Restore from Backup (.json)
+                  </button>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid var(--border-subtle); margin: 0.75rem 0;">
+
+                <button class="btn btn-danger" onclick="App.resetAllData()">
+                  <i data-lucide="trash-2"></i> Wipe All Data & Start Fresh
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+    </div>
+
   </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODALS                                                                -->
+  <!-- ===================================================================== -->
+
+  <!-- Modal 1: Add / Edit Transaction -->
+  <div class="modal-backdrop" id="modalTransaction">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modalTxTitle">Add Transaction</h3>
+        <button class="btn-icon btn-sm" onclick="App.closeModal('modalTransaction')" aria-label="Close">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <form id="formTransaction">
+        <div class="modal-body">
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Type</label>
+              <select class="form-control" id="txFormType">
+                <option value="expense">Expense (Outflow)</option>
+                <option value="income">Income (Inflow)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select class="form-control" id="txFormCategory">
+                <!-- Populated via JS -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Amount</label>
+            <div class="input-group">
+              <span class="input-prefix">$</span>
+              <input type="number" step="0.01" min="0.01" class="form-control" id="txFormAmount" placeholder="0.00" required>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Title / Merchant</label>
+              <input type="text" class="form-control" id="txFormTitle" placeholder="e.g. Trader Joe's, Paycheck" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Date</label>
+              <input type="date" class="form-control" id="txFormDate" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Notes (Optional)</label>
+            <input type="text" class="form-control" id="txFormNotes" placeholder="Additional details...">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.closeModal('modalTransaction')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Edit Category Budgets -->
+  <div class="modal-backdrop" id="modalBudgets">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Monthly Category Budgets</h3>
+        <button class="btn-icon btn-sm" onclick="App.closeModal('modalBudgets')" aria-label="Close">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.8rem; margin-bottom: 1rem;">Set your monthly spending limit targets per category.</p>
+        <div id="budgetModalInputs">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="App.closeModal('modalBudgets')">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="App.saveBudgetsFromModal()">Save Budgets</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Add Net Worth Asset / Liability -->
+  <div class="modal-backdrop" id="modalNetWorthItem">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modalNWTitle">Add Balance Sheet Item</h3>
+        <button class="btn-icon btn-sm" onclick="App.closeModal('modalNetWorthItem')" aria-label="Close">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <form id="formNetWorthItem">
+        <input type="hidden" id="nwFormType" value="asset">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Item Description</label>
+            <input type="text" class="form-control" id="nwFormName" placeholder="e.g. S&P 500 Index, Mortgage" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <input type="text" class="form-control" id="nwFormCategory" placeholder="e.g. Cash, Stocks, Real Estate, Debt" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Value / Balance</label>
+            <div class="input-group">
+              <span class="input-prefix">$</span>
+              <input type="number" step="1" min="0" class="form-control" id="nwFormAmount" placeholder="0.00" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.closeModal('modalNetWorthItem')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Stack Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Application Scripts -->
+  <script src="js/storage.js"></script>
+  <script src="js/calculators.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/tracker.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
