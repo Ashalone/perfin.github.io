@@ -898,14 +898,22 @@ a:hover {
   position: relative;
   width: 100%;
   height: 300px;
+  /* Explicit dimensions prevent Chart.js from triggering layout recalculations */
+  contain: layout size;
+  /* Promote canvas to its own compositor layer to avoid repaints on parent */
+  will-change: transform;
 }
 
 .chart-wrapper-tall {
   height: 360px;
+  contain: layout size;
+  will-change: transform;
 }
 
 .chart-wrapper-donut {
   height: 240px;
+  contain: layout size;
+  will-change: transform;
 }
 
 /* Modal Dialogs */

@@ -7,23 +7,35 @@ const App = {
   currentTab: 'dashboard',
   editingTxId: null,
 
+  // requestIdleCallback with setTimeout fallback for Safari / older browsers
+  ric(cb) {
+    if (window.requestIdleCallback) {
+      requestIdleCallback(cb, { timeout: 1500 });
+    } else {
+      setTimeout(cb, 0);
+    }
+  },
+
   init() {
-    // 1. Initialize Theme & Currency
+    // --- CRITICAL PATH (synchronous, runs before first paint) ---
+    // 1. Apply theme immediately so there's no flash of unstyled content
     const settings = Storage.getSettings();
     this.applyTheme(settings.theme || 'dark');
-    this.populateCurrencySelect();
 
-    // 2. Setup Navigation & UI Listeners
+    // 2. Wire up navigation & event listeners (no DOM reads)
     this.setupNavigation();
     this.setupEventListeners();
 
-    // 3. Render Initial Dashboard View
-    this.renderActiveTab();
+    // 3. Populate currency dropdown (lightweight)
+    this.populateCurrencySelect();
 
-    // 4. Initialize Lucide Icons
-    if (window.lucide) {
-      lucide.createIcons();
-    }
+    // --- DEFERRED PATH (runs after first paint, when browser is idle) ---
+    // Heavy chart rendering, data aggregation, and Lucide icon injection
+    // are deferred so the LCP element (card-title) can paint immediately.
+    this.ric(() => {
+      this.renderActiveTab();
+      if (window.lucide) lucide.createIcons();
+    });
   },
 
   // =========================================================================
@@ -165,29 +177,15 @@ const App = {
 
   renderActiveTab() {
     switch (this.currentTab) {
-      case 'dashboard':
-        this.renderDashboard();
-        break;
-      case 'tracker':
-        this.renderTracker();
-        break;
-      case 'compound':
-        this.renderCompoundCalculator();
-        break;
-      case 'loan':
-        this.renderLoanCalculator();
-        break;
-      case 'fire':
-        this.renderFireCalculator();
-        break;
-      case 'networth':
-        this.renderNetWorth();
-        break;
-      case 'settings':
-        this.renderSettings();
-        break;
+      case 'dashboard':  this.renderDashboard();           break;
+      case 'tracker':    this.renderTracker();             break;
+      case 'compound':   this.renderCompoundCalculator();  break;
+      case 'loan':       this.renderLoanCalculator();      break;
+      case 'fire':       this.renderFireCalculator();      break;
+      case 'networth':   this.renderNetWorth();            break;
+      case 'settings':   this.renderSettings();            break;
     }
-
+    // Re-run icon injection after any DOM mutation
     if (window.lucide) lucide.createIcons();
   },
 
@@ -195,27 +193,32 @@ const App = {
   // 1. Dashboard View
   // =========================================================================
   renderDashboard() {
-    const summary = Tracker.getMonthlySummary();
-    const netWorthData = Storage.getNetWorthData();
-    const nwMetrics = Calculators.calculateNetWorth(netWorthData.assets, netWorthData.liabilities);
+    // --- BATCH READ phase (all data/DOM reads before any writes) ---
+    // This avoids interleaved read→write→read cycles that cause forced reflows.
+    const summary       = Tracker.getMonthlySummary();
+    const netWorthData  = Storage.getNetWorthData();
+    const nwMetrics     = Calculators.calculateNetWorth(netWorthData.assets, netWorthData.liabilities);
+    const historical    = Tracker.getHistoricalCashflow(6);
+    const breakdown     = Tracker.getCategoryBreakdown('this_month');
+    const allTxsForCards = Storage.getTransactions().slice(0, 5);
 
-    // Update Stat Cards
-    const elNetWorth = document.getElementById('dashNetWorthVal');
-    const elIncome = document.getElementById('dashIncomeVal');
-    const elExpense = document.getElementById('dashExpenseVal');
+    // Cache element references (single DOM lookup each)
+    const elNetWorth   = document.getElementById('dashNetWorthVal');
+    const elIncome     = document.getElementById('dashIncomeVal');
+    const elExpense    = document.getElementById('dashExpenseVal');
     const elSavingsRate = document.getElementById('dashSavingsRateVal');
 
-    if (elNetWorth) elNetWorth.textContent = this.formatCurrency(nwMetrics.netWorth);
-    if (elIncome) elIncome.textContent = this.formatCurrency(summary.totalIncome);
-    if (elExpense) elExpense.textContent = this.formatCurrency(summary.totalExpenses);
+    // --- WRITE phase (all DOM mutations in one block) ---
+    if (elNetWorth)    elNetWorth.textContent    = this.formatCurrency(nwMetrics.netWorth);
+    if (elIncome)      elIncome.textContent      = this.formatCurrency(summary.totalIncome);
+    if (elExpense)     elExpense.textContent     = this.formatCurrency(summary.totalExpenses);
     if (elSavingsRate) elSavingsRate.textContent = `${summary.savingsRate.toFixed(1)}%`;
 
-    // Render Charts
-    const historical = Tracker.getHistoricalCashflow(6);
-    Charts.renderDashboardCashflow('dashCashflowChart', historical);
-
-    const breakdown = Tracker.getCategoryBreakdown('this_month');
-    Charts.renderDashboardDonut('dashCategoryDonut', breakdown);
+    // Charts rendered after stat cards are painted (deferred via rAF)
+    requestAnimationFrame(() => {
+      Charts.renderDashboardCashflow('dashCashflowChart', historical);
+      Charts.renderDashboardDonut('dashCategoryDonut', breakdown);
+    });
 
     // Render Recent Transactions
     const recentContainer = document.getElementById('dashRecentTransactionsList');
