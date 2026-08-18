@@ -36,14 +36,15 @@ const DEFAULT_CATEGORIES = {
 };
 
 const DEFAULT_SETTINGS = {
-  currency: 'USD',
-  currencySymbol: '$',
+  currency: 'BDT',
+  currencySymbol: '৳',
   currencyPosition: 'prefix', // prefix or suffix
   theme: 'dark',
   dateFormat: 'YYYY-MM-DD'
 };
 
 const CURRENCY_LIST = [
+  { code: 'BDT', symbol: '৳', name: 'BDT - Bangladeshi Taka' },
   { code: 'USD', symbol: '$', name: 'USD - US Dollar' },
   { code: 'EUR', symbol: '€', name: 'EUR - Euro' },
   { code: 'GBP', symbol: '£', name: 'GBP - British Pound' },
